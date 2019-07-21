@@ -1,0 +1,11 @@
+//#define BUILD_component_Boolean_Operations
+//#define BUILD_component_Canonical
+//#define BUILD_component_CGAL_Example
+//#define BUILD_component_Compression_Valence
+//#define BUILD_component_Curvature
+//#define BUILD_component_MSDM2
+//#define BUILD_component_MSDM
+//#define BUILD_component_Various_Processing
+//#define BUILD_component_Various_Tools
+//#define BUILD_component_VSA
+#define BUILD_component_Roughness
