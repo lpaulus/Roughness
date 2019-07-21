@@ -36,7 +36,7 @@ class CRoughness
   typedef typename Polyhedron::Vertex                  Vertex;
   typedef typename Polyhedron::Halfedge                Halfedge;
   typedef typename Polyhedron::Facet                   Facet;
-  
+
   typedef typename Polyhedron::Vertex_handle           Vertex_handle;
   typedef typename Polyhedron::Halfedge_handle         Halfedge_handle;
   typedef typename Polyhedron::Facet_handle            Facet_handle;
@@ -46,17 +46,17 @@ class CRoughness
   typedef typename Polyhedron::Edge_iterator           Edge_iterator;
   typedef typename Polyhedron::Facet_iterator          Facet_iterator;
 
-  typedef typename Polyhedron::Halfedge_around_facet_circulator  
+  typedef typename Polyhedron::Halfedge_around_facet_circulator
                                             Halfedge_around_facet_circulator;
-  typedef typename Polyhedron::Halfedge_around_vertex_circulator 
+  typedef typename Polyhedron::Halfedge_around_vertex_circulator
                                             Halfedge_around_vertex_circulator;
   typedef typename Polyhedron::Point_3                 Point;
   typedef typename Polyhedron::FT                           FT;
   typedef typename Polyhedron::Vector                       Vector;
   typedef typename Polyhedron::HalfedgeDS             HalfedgeDS;
-	
-	
-  
+
+
+
 public:
 
 Polyhedron *m_Polyhedron;
@@ -70,9 +70,9 @@ void Taubin_smooth(Polyhedron * m_Poly)
 	{
 		int MatSize=m_Poly->size_of_vertices();
 
-		double* X=new double[MatSize]; 
-		double* Y=new double[MatSize]; 
-		double* Z=new double[MatSize]; 
+		double* X=new double[MatSize];
+		double* Y=new double[MatSize];
+		double* Z=new double[MatSize];
 		////TAubin smoothing
 
 		int Ind=0;
@@ -80,14 +80,14 @@ void Taubin_smooth(Polyhedron * m_Poly)
 		for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
 				pVertex	!= m_Poly->vertices_end();
 				pVertex++)
-		{				
-				
+		{
+
 				int valence=0;
 				double SommeWi=0;
 				X[Ind]=0;
 				Y[Ind]=0;
 				Z[Ind]=0;
-				
+
 				Halfedge_around_vertex_circulator	pHalfEdge	=	pVertex->vertex_begin();
 				Halfedge_around_vertex_circulator	d	=	pHalfEdge;
 				CGAL_For_all(pHalfEdge,d)
@@ -118,25 +118,25 @@ void Taubin_smooth(Polyhedron * m_Poly)
 				pVertex++)
 		{
 
-			
+
 			Point p=Point(X[Ind],Y[Ind],Z[Ind]);
 			pVertex->point()=p;
 			Ind=Ind+1;
 
-		}	
+		}
 
 		Ind=0;
 		for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
 				pVertex	!= m_Poly->vertices_end();
 				pVertex++)
-		{				
-				
+		{
+
 				int valence=0;
 				double SommeWi=0;
 				X[Ind]=0;
 				Y[Ind]=0;
 				Z[Ind]=0;
-				
+
 				Halfedge_around_vertex_circulator	pHalfEdge	=	pVertex->vertex_begin();
 				Halfedge_around_vertex_circulator	d	=	pHalfEdge;
 				CGAL_For_all(pHalfEdge,d)
@@ -162,7 +162,7 @@ void Taubin_smooth(Polyhedron * m_Poly)
 
 		}
 
-		
+
 
 		Ind=0;
 		for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
@@ -170,12 +170,12 @@ void Taubin_smooth(Polyhedron * m_Poly)
 				pVertex++)
 		{
 
-			
+
 			Point p=Point(X[Ind],Y[Ind],Z[Ind]);
 			pVertex->point()=p;
 			Ind=Ind+1;
 
-		}	
+		}
 
 
 
@@ -186,13 +186,13 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 {
 	int MatSize=m_Poly->size_of_vertices();
 
-	double* X=new double[MatSize]; 
-	double* Y=new double[MatSize]; 
-	double* Z=new double[MatSize]; 
+	double* X=new double[MatSize];
+	double* Y=new double[MatSize];
+	double* Z=new double[MatSize];
 
-	double* XBUF=new double[MatSize]; 
-	double* YBUF=new double[MatSize]; 
-	double* ZBUF=new double[MatSize]; 
+	double* XBUF=new double[MatSize];
+	double* YBUF=new double[MatSize];
+	double* ZBUF=new double[MatSize];
 
 	int Ind=0;
 	for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
@@ -200,12 +200,12 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 			pVertex++)
 	{
 
-		
+
 		XBUF[Ind]=pVertex->point().x();
 		YBUF[Ind]=pVertex->point().y();
 		ZBUF[Ind++]=pVertex->point().z();
-		
-	}	
+
+	}
 
 
 	 Ind=0;
@@ -226,15 +226,15 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 			pVertex++)
 	{
 
-		
+
 		XBUF[Ind]=X[Ind];
 		YBUF[Ind]=Y[Ind];
 		ZBUF[Ind]=Z[Ind++];
 
-	}	
+	}
 
 	Ind=0;
-	
+
 	for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
 			pVertex	!= m_Poly->vertices_end();
 			pVertex++)
@@ -249,12 +249,12 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 			pVertex++)
 	{
 
-		
+
 		Point p=Point(X[Ind],Y[Ind],Z[Ind]);
 		pVertex->point()=p;
 		Ind=Ind+1;
 
-	}	
+	}
 
 
 	delete []X;
@@ -263,7 +263,7 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 	delete []XBUF;
 	delete []YBUF;
 	delete []ZBUF;
-		
+
 
 
 }
@@ -284,12 +284,12 @@ bool sphere_clip_vector(Point &O, double r,const Point &P, Vector &V)
 
 	if(delta < 0) {
 		// Should not happen, but happens sometimes (numerical precision)
-		
+
 		return true ;
 	}
 	double t = (- b + std::sqrt(delta)) / (2.0 * a) ;
 	if(t < 0.0) {
-		
+
 		// Should not happen, but happens sometimes (numerical precision)
 		return true ;
 	}
@@ -300,7 +300,7 @@ bool sphere_clip_vector(Point &O, double r,const Point &P, Vector &V)
 
 	if(t==0)
 	{
-		
+
 		t=0.01;
 	}
 
@@ -336,18 +336,18 @@ void Taubin_smooth_multi_scale_per_vertex(Polyhedron *m_Poly,Vertex* pVertex, do
 			Point p1 = h->vertex()->point();
 			Point p2 = h->opposite()->vertex()->point();
 			Vector V = (p2-p1);
-			if(v==pVertex || V * (P - O) > 0.0) 
+			if(v==pVertex || V * (P - O) > 0.0)
 			{
 				double len_old = std::sqrt(V*V);
-				
+
 
 				bool isect = sphere_clip_vector(O, radius, P, V) ;
 
-			
 
-				if(!isect) 
+
+				if(!isect)
 				{
-					
+
 					Vertex_iterator w=h->opposite()->vertex();
 					if(vertices.find(&(*w)) == vertices.end())
 					{
@@ -366,7 +366,7 @@ void Taubin_smooth_multi_scale_per_vertex(Polyhedron *m_Poly,Vertex* pVertex, do
 					z+=Wi*p2.z();
 				}
 			}
-			
+
 		}
 		iter++;
 	}
@@ -381,18 +381,18 @@ void Taubin_smooth_multi_scale_per_vertex(Polyhedron *m_Poly,Vertex* pVertex, do
 	}
 	else
 	{
-		
+
 
 		x=x/SommeWi-xb;
 		y=y/SommeWi-yb;
 		z=z/SommeWi-zb;
-			
+
 
 		x=xb+coef*x;
 		y=yb+coef*y;
 		z=zb+coef*z;
 	}
-	
+
 
 
 
@@ -403,13 +403,13 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 		std::set<Vertex*> vertices ;
         Point O = pVertex->point() ;
         std::stack<Vertex*> S ;
-        S.push(pVertex) ;	
+        S.push(pVertex) ;
         vertices.insert(pVertex) ;
-		
-	
+
+
 		int NbSommetInSphere=0;
 		double SommeDistance=0;
-	
+
 
         while(!S.empty())
 		{
@@ -423,7 +423,7 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
                 Point p1 = h->vertex()->point();
 				Point p2 = h->opposite()->vertex()->point();
 				Vector V = (p2-p1);
-                if(v==pVertex || V * (P - O) > 0.0) 
+                if(v==pVertex || V * (P - O) > 0.0)
 				{
 					double len_old = std::sqrt(V*V);
 					bool isect = sphere_clip_vector(O, radius, P, V) ;
@@ -431,7 +431,7 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 
 					NbSommetInSphere++;
 					///ici on prend en compte la distance map des sommets
-					
+
 					double DistancePondere;
 					Point PPondere;
 					if(len_old!=0)
@@ -450,9 +450,9 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 
 					SommeDistance+=DistancePondere;
 
-					if(!isect) 
+					if(!isect)
 					{
-						
+
 						Vertex_iterator w=h->opposite()->vertex();
                         if(vertices.find(&(*w)) == vertices.end())
 						{
@@ -460,11 +460,11 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
                             S.push(&(*w)) ;
                         }
                     }
-					
+
 				}
-                
+
 			}
-			
+
 		}
 
 		double moyenne=0;
@@ -474,8 +474,8 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 		{
 			moyenne=SommeDistance/(double)NbSommetInSphere;
 
-		
-			
+
+
 
 			variance=0;
 			if(NbSommetInSphere!=0)
@@ -501,7 +501,7 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 			}
 			moyenne=SommeDistance/(double)SommeWi;
 
-			
+
             for(int i=0;i<NbSommetInSphere;i++)
 			{
 				Vector DistancePt=TabPoint[i]-pVertex->point();
@@ -515,19 +515,19 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 				variance=sqrt(variance);
 
 		}
-			
 
-			
+
+
 			pVertex->CourbureMoyenne=moyenne;
 			pVertex->CourbureVariance=variance;
 
-            
+
 	}
 
-	
+
 	void Processroughness_curve(Polyhedron *PolyUsed,double radius)
 	{
-		
+
 		double somme_roughness=0;
 		int NbVert=0;
 
@@ -548,17 +548,21 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 
 void compute_Roughness(double radius, double SmoothRadius)
 {
-	
+
 	Polyhedron SmoothPoly=*m_Polyhedron;
 
 	m_Polyhedron->MinNrmRoughCurvature(10000);
 	m_Polyhedron->MaxNrmRoughCurvature(-10000);
-	
-		
 
-	for(int i=0;i<5;i++)
+
+
+    printf("Taubin_smooth_multi_scale\n");
+	for(int i=0;i<5;i++) {
+        printf("%d\n", i);
 		Taubin_smooth_multi_scale(&SmoothPoly,SmoothRadius);
+    }
 
+    printf("Taubin_smooth\n");
 	for(int i=0;i<10;i++)
 	{
 		Taubin_smooth(&SmoothPoly);
@@ -569,15 +573,20 @@ void compute_Roughness(double radius, double SmoothRadius)
 		Taubin_smooth(&SmoothPoly);
 		Taubin_smooth(&SmoothPoly);
 	}
-		
 
+
+    printf("compute_normals\n");
 	SmoothPoly.compute_normals();
 
 	Normal_cycle<Polyhedron> estimateur;
+    printf("principal_curvature\n");
 	estimateur.principal_curvature(SmoothPoly,true,0.005);
+    printf("principal_curvature\n");
 	estimateur.principal_curvature(*m_Polyhedron,true,0.005);
-		
+
+    printf("Processroughness_curve\n");
 	Processroughness_curve(&SmoothPoly,radius);
+    printf("Processroughness_curve\n");
 	Processroughness_curve(m_Polyhedron,radius);
 
 	Vertex_iterator	pVertex2=SmoothPoly.vertices_begin();
@@ -585,10 +594,11 @@ void compute_Roughness(double radius, double SmoothRadius)
 					pVertex	!= m_Polyhedron->vertices_end();
 					pVertex++)
 		{
+            printf("pVertex: %d %d\n", pVertex, pVertex2);
 			double offset=0;
 			if(pVertex->CourbureMoyenne>pVertex2->CourbureMoyenne)
 				offset=fabs(pVertex->CourbureMoyenne-pVertex2->CourbureMoyenne);
-			
+
 			pVertex->Roughness(offset);
             if(offset<m_Polyhedron->MinNrmRoughCurvature())
 						m_Polyhedron->MinNrmRoughCurvature(offset);
@@ -600,7 +610,7 @@ void compute_Roughness(double radius, double SmoothRadius)
 
 		}
 
-	
+
 
 	}
 

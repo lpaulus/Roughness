@@ -17,13 +17,20 @@ int main(int argc, char *argv[])
     else
     {
         PolyhedronPtr poly = PolyhedronPtr(new Polyhedron());
+        printf("Loading\n");
         poly->load_mesh_obj(argv[1]);
 
+        printf("Normalise\n");
         poly->Normalise();
+        printf("Bounding box\n");
         poly->compute_bounding_box();
+        printf("Normals\n");
         poly->compute_normals();
+        printf("Type\n");
         poly->compute_type();
+        printf("# components\n");
         poly->calc_nb_components();
+        printf("# boundaries\n");
         poly->calc_nb_boundaries();
 
         double epsilon;
@@ -34,8 +41,10 @@ int main(int argc, char *argv[])
             outputFilename = argv[3];
 
         CRoughness<Polyhedron> roughness(poly.get());
+        printf("Compute roughness\n");
         roughness.compute_Roughness(2*epsilon, epsilon);
 
+        printf("Write roughness\n");
         FILE *fichier = fopen(outputFilename.c_str(), "w");
         for (Vertex_iterator pVertex = poly->vertices_begin(); pVertex != poly->vertices_end(); pVertex++)
         {
