@@ -565,6 +565,7 @@ void compute_Roughness(double radius, double SmoothRadius)
     printf("Taubin_smooth\n");
 	for(int i=0;i<10;i++)
 	{
+        printf("%d\n", i);
 		Taubin_smooth(&SmoothPoly);
 		Taubin_smooth(&SmoothPoly);
 		Taubin_smooth(&SmoothPoly);
@@ -589,12 +590,12 @@ void compute_Roughness(double radius, double SmoothRadius)
     printf("Processroughness_curve\n");
 	Processroughness_curve(m_Polyhedron,radius);
 
+    printf("Final touch\n");
 	Vertex_iterator	pVertex2=SmoothPoly.vertices_begin();
 		for(Vertex_iterator	pVertex	=	m_Polyhedron->vertices_begin();
 					pVertex	!= m_Polyhedron->vertices_end();
 					pVertex++)
 		{
-            printf("pVertex: %d %d\n", pVertex, pVertex2);
 			double offset=0;
 			if(pVertex->CourbureMoyenne>pVertex2->CourbureMoyenne)
 				offset=fabs(pVertex->CourbureMoyenne-pVertex2->CourbureMoyenne);
