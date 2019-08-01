@@ -12,16 +12,21 @@ bool endsWith(const char *str1, const char *str2)
 
 int main(int argc, char *argv[])
 {
-    if(argc <= 2 || !endsWith(argv[1], ".obj"))
-        printf("Roughness model.obj epsilon (roughness.txt)\n");
+    if(argc <= 2 || (!endsWith(argv[1], ".off") && !endsWith(argv[1], ".obj")))
+        printf("Roughness model.[off|obj] epsilon (roughness.txt)\n");
     else
     {
         PolyhedronPtr poly = PolyhedronPtr(new Polyhedron());
         printf("Loading\n");
-        poly->load_mesh_obj(argv[1]);
+        if (endsWith(argv[1], ".obj")) {
+            poly->load_mesh_obj(argv[1]);
+        } else {
+            poly->load_mesh(argv[1]);
+        }
 
         printf("Normalise\n");
         poly->Normalise();
+        poly->write_off("normalised.off", false, false);
         printf("Bounding box\n");
         poly->compute_bounding_box();
         printf("Normals\n");
@@ -51,8 +56,7 @@ int main(int argc, char *argv[])
             fprintf(fichier, "%lf\n", pVertex->Roughness());
         }
         fclose(fichier);
-        printf("success\n");
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }

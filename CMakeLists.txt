@@ -6,15 +6,10 @@ find_package(CGAL REQUIRED)
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(Polyhedron)
 
-file(GLOB SOURCES "*.cpp")
-
-add_executable(Roughness ${SOURCES})
+add_executable(Roughness main.cpp extract_Vpropres.cpp)
+add_executable(Color color.cpp)
 
 if(CGAL_FOUND)
-  #required to use basic_viewer
-  #add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-  #create the executable of the application
-  #add_executable(test_ test.cpp)
   #link it with the required CGAL libraries
   target_link_libraries(Roughness CGAL::CGAL)
 else()

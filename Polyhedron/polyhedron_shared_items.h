@@ -970,6 +970,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 				{
 					file << "  ";
 					file << pVert->color(0) << " " << pVert->color(1) << " " << pVert->color(2);
+					// 1.0 is the alpha value of the color which needs to be set, see e.g. https://people.sc.fsu.edu/~jburkardt/data/off/off.html
+					file << " 1.0";
 				}
 				file << endl;
 			}
@@ -1181,8 +1183,8 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			this->compute_bounding_box();
 		}
 
-#if (0)
-		bool load_mesh(string path)
+#if (1)
+		bool load_mesh(std::string path)
 		{
 			// Check extension
 			size_t dot = path.find_last_of('.');
@@ -1772,7 +1774,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			}
 		}
 
-#if (0)
+#if (1)
 		bool load_mesh_off(string filename)
 		{
 		    // Read from stream
