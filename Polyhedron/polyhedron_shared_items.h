@@ -1207,10 +1207,10 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 			{
 				if ( !this->load_mesh_obj(path) ) { return false; }
 			}
-			else if ( (extension == "X3D") )
+			/*else if ( (extension == "X3D") )
 			{
 				if ( !this->load_mesh_x3d(path) ) { return false; }
-			}
+			}*/
 #if (0)
 			// Ajout Céline :
 			else if ( (extension == "DAT") )
