@@ -205,7 +205,8 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 
 		XBUF[Ind]=pVertex->point().x();
 		YBUF[Ind]=pVertex->point().y();
-		ZBUF[Ind++]=pVertex->point().z();
+		ZBUF[Ind]=pVertex->point().z();
+        Ind++;
 
 	}
 
@@ -234,7 +235,8 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 
 		XBUF[Ind]=X[Ind];
 		YBUF[Ind]=Y[Ind];
-		ZBUF[Ind]=Z[Ind++];
+		ZBUF[Ind]=Z[Ind];
+        Ind++;
 
 	}
 
@@ -260,7 +262,7 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 
 		Point p=Point(X[Ind],Y[Ind],Z[Ind]);
 		pVertex->point()=p;
-		Ind=Ind+1;
+        Ind++;
 
 	}
 
