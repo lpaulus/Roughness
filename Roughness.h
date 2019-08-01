@@ -556,7 +556,7 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 
 	}
 
-void compute_Roughness(double radius, double SmoothRadius)
+void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadius)
 {
 
 	Polyhedron SmoothPoly=*m_Polyhedron;
@@ -592,14 +592,38 @@ void compute_Roughness(double radius, double SmoothRadius)
 
 	Normal_cycle<Polyhedron> estimateur;
     printf("Compute maximum curvature kmax of each vertex of the smooth mesh\n");
-	estimateur.principal_curvature(SmoothPoly,true,0.005);
+	estimateur.principal_curvature(SmoothPoly,true,CurvatureRadius);
+    /*FILE *smooth_kmax = fopen("smooth_kmax.txt", "w");
+    for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
+    {
+        fprintf(smooth_kmax, "%lf\n", pVertex->CourbureMoyenne);
+    }
+    fclose(smooth_kmax);*/
     printf("Compute maximum curvature kmax of each vertex of the original mesh\n");
-	estimateur.principal_curvature(*m_Polyhedron,true,0.005);
+	estimateur.principal_curvature(*m_Polyhedron,true,CurvatureRadius);
+    /*FILE *original_kmax = fopen("original_kmax.txt", "w");
+    for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
+    {
+        fprintf(original_kmax, "%lf\n", pVertex->CourbureMoyenne);
+    }
+    fclose(original_kmax);*/
 
     printf("Compute average curvature kav of each vertex of the smooth mesh\n");
 	Processroughness_curve(&SmoothPoly,radius);
+    /*FILE *smooth_kav = fopen("smooth_kav.txt", "w");
+    for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
+    {
+        fprintf(smooth_kav, "%lf\n", pVertex->CourbureMoyenne);
+    }
+    fclose(smooth_kav);*/
     printf("Compute average curvature kav of each vertex of the original mesh\n");
 	Processroughness_curve(m_Polyhedron,radius);
+    /*FILE *original_kav = fopen("original_kav.txt", "w");
+    for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
+    {
+        fprintf(original_kav, "%lf\n", pVertex->CourbureMoyenne);
+    }
+    fclose(original_kav);*/
 
     printf("Compute roughness for each vertex\n");
 	Vertex_iterator	pVertex2=SmoothPoly.vertices_begin();

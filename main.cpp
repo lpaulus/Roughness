@@ -13,7 +13,7 @@ bool endsWith(const char *str1, const char *str2)
 int main(int argc, char *argv[])
 {
     if(argc <= 2 || (!endsWith(argv[1], ".off") && !endsWith(argv[1], ".obj")))
-        printf("Roughness model.[off|obj] epsilon (roughness.txt)\n");
+        printf("Roughness model.[off|obj] epsilon [CurvatureRadius] [roughness.txt]\n");
     else
     {
         PolyhedronPtr poly = PolyhedronPtr(new Polyhedron());
@@ -41,13 +41,21 @@ int main(int argc, char *argv[])
         double epsilon;
         sscanf(argv[2], "%lf", &epsilon);
 
+        double CurvatureRadius = epsilon / 2;
         std::string outputFilename = "roughness.txt";
-        if(argc > 3)
+        if(argc > 3) {
+            int err = sscanf(argv[3], "%lf", &CurvatureRadius);
+            if (err != 1) {
+                // It wasn't a double, might be the filename
+                outputFilename = argv[3];
+            }
+        }
+        if(argc > 4)
             outputFilename = argv[3];
 
         CRoughness<Polyhedron> roughness(poly.get());
         printf("Compute roughness\n");
-        roughness.compute_Roughness(2*epsilon, epsilon);
+        roughness.compute_Roughness(2*epsilon, epsilon, CurvatureRadius);
 
         printf("Write roughness\n");
         FILE *fichier = fopen(outputFilename.c_str(), "w");
