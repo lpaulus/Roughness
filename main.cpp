@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         double epsilon;
         sscanf(argv[2], "%lf", &epsilon);
 
-        double CurvatureRadius = epsilon / 2;
+        double CurvatureRadius = 0.005;
         std::string outputFilename = "roughness.txt";
         if(argc > 3) {
             int err = sscanf(argv[3], "%lf", &CurvatureRadius);
