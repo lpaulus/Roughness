@@ -138,7 +138,7 @@ void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
 					continue;
 				}
 			}
-				//  Call the Jacovi subroutine 
+				//  Call the Jacobi subroutine 
 			for(int u=0;u<4;u++)
 				for(int v=0;v<4;v++)
 				{
