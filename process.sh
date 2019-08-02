@@ -10,7 +10,7 @@ if [ ! -f data/$name.obj ]; then
     exit 1
 fi
 if [ -d $dir ]; then
-    echo "Directory $dir already exists. Run `rm -r $dir` to get rid of the results."
+    echo "Directory $dir already exists. Run 'rm -r $dir' to get rid of the results."
     exit 1
 fi
 mkdir -p $dir
