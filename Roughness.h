@@ -596,7 +596,7 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
     FILE *smooth_kmax = fopen("smooth_kmax.txt", "w");
     for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
     {
-        fprintf(smooth_kmax, "%lf\n", pVertex->CourbureMoyenne);
+        fprintf(smooth_kmax, "%lf\n", pVertex->Kmax());
     }
     fclose(smooth_kmax);
     printf("Compute maximum curvature kmax of each vertex of the original mesh\n");
@@ -604,7 +604,7 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
     FILE *original_kmax = fopen("original_kmax.txt", "w");
     for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
     {
-        fprintf(original_kmax, "%lf\n", pVertex->CourbureMoyenne);
+        fprintf(original_kmax, "%lf\n", pVertex->Kmax());
     }
     fclose(original_kmax);
 
