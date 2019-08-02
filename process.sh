@@ -1,10 +1,11 @@
-if [ $# -ne 2 ]; then
-    echo "Need 2 arguments"
+if [ $# -ne 3 ]; then
+    echo "Need 3 arguments"
     exit 1
 fi
 name=$1
 eps=$2
-dir="results/$name/$eps"
+rad=$3
+dir="results/$name/${eps}_$rad"
 if [ ! -f data/$name.obj ]; then
     echo "No $name.obj in data directory"
     exit 1
@@ -15,7 +16,7 @@ if [ -d $dir ]; then
 fi
 mkdir -p $dir
 cd $dir
-../../../build/Roughness ../../../data/$name.obj $eps
+../../../build/Roughness ../../../data/$name.obj $eps $rad
 if [ $? -ne 0 ]; then
     echo "Roughness failed"
     cd ../../../
