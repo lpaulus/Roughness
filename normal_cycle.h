@@ -127,9 +127,15 @@ void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
 				//recherche des vecteurs et valeurs propres
 				if(ValPro(3,CovMat,1e-15,10000.,VectPro,Valpro)==-1)
 				{
+					fprintf(stderr, "Computation of eigenvalues/eigenvector for the following matrix failed hence the principal curvature Kmin and Kmax of the corresponding vertex are set to 0:");
+					fprintf(stderr, "[%lf %lf %lf;\n", ppMatrix_sum[0][0], ppMatrix_sum[0][1], ppMatrix_sum[0][2]);
+					fprintf(stderr, " %lf %lf %lf;\n", ppMatrix_sum[1][0], ppMatrix_sum[1][1], ppMatrix_sum[1][2]);
+					fprintf(stderr, " %lf %lf %lf]\n", ppMatrix_sum[2][0], ppMatrix_sum[2][1], ppMatrix_sum[2][2]);
 					pVertex->VKmax(CGAL::NULL_VECTOR);
 					pVertex->VKmin(CGAL::NULL_VECTOR);
-					return;
+					pVertex->Kmax(0.0);
+					pVertex->Kmin(0.0);
+					continue;
 				}
 			}
 				//  Call the Jacovi subroutine 
