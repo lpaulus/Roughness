@@ -68,10 +68,12 @@ void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
 
 
   Vertex_iterator pVertex = NULL;
+  int Ind = 0;
   for(pVertex = pMesh.vertices_begin();
       pVertex != pMesh.vertices_end();
       pVertex++)
   {
+    Ind++;
     double ppMatrix_sum[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 	double eigenvalues[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 	double eigenvectors[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
@@ -102,7 +104,7 @@ void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
 			CovMat[3][2]=ppMatrix_sum[2][1];
 			CovMat[3][3]=ppMatrix_sum[2][2];
 
-			//la matrice n'est elle pas d�ja diagonale?
+			//la matrice n'est elle pas deja diagonale?
 			if(ppMatrix_sum[0][1]==0 && ppMatrix_sum[0][2]==0 &
 				ppMatrix_sum[1][0]==0 && ppMatrix_sum[1][2]==0 &
 				ppMatrix_sum[2][1]==0 && ppMatrix_sum[2][0]==0)
@@ -127,10 +129,11 @@ void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
 				//recherche des vecteurs et valeurs propres
 				if(ValPro(3,CovMat,1e-15,10000.,VectPro,Valpro)==-1)
 				{
-					fprintf(stderr, "Computation of eigenvalues/eigenvector for the following matrix failed hence the principal curvature Kmin and Kmax of the corresponding vertex are set to 0:");
-					fprintf(stderr, "[%lf %lf %lf;\n", ppMatrix_sum[0][0], ppMatrix_sum[0][1], ppMatrix_sum[0][2]);
-					fprintf(stderr, " %lf %lf %lf;\n", ppMatrix_sum[1][0], ppMatrix_sum[1][1], ppMatrix_sum[1][2]);
-					fprintf(stderr, " %lf %lf %lf]\n", ppMatrix_sum[2][0], ppMatrix_sum[2][1], ppMatrix_sum[2][2]);
+					fprintf(stderr, "\e[38;5;226m┌\e[1;1m Warning:\e[0m Computation of eigenvalues/eigenvector for the following matrix failed hence the principal curvature Kmin and Kmax of the corresponding vertex (which has index %d) are set to 0:\n", Ind + 1);
+					fprintf(stderr, "\e[38;5;226m│\e[0m [%lf %lf %lf;\n", ppMatrix_sum[0][0], ppMatrix_sum[0][1], ppMatrix_sum[0][2]);
+					fprintf(stderr, "\e[38;5;226m│\e[0m  %lf %lf %lf;\n", ppMatrix_sum[1][0], ppMatrix_sum[1][1], ppMatrix_sum[1][2]);
+					fprintf(stderr, "\e[38;5;226m│\e[0m  %lf %lf %lf]\n", ppMatrix_sum[2][0], ppMatrix_sum[2][1], ppMatrix_sum[2][2]);
+					fprintf(stderr, "\e[38;5;226m└\e[1;1m hence the principal curvature Kmin and Kmax of vertex %d are set to 0.\n", Ind + 1);
 					pVertex->VKmax(CGAL::NULL_VECTOR);
 					pVertex->VKmin(CGAL::NULL_VECTOR);
 					pVertex->Kmax(0.0);

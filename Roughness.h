@@ -183,6 +183,15 @@ void Taubin_smooth(Polyhedron * m_Poly)
 	}
 
 #define DEBUG_MOD 100000
+void debug_iteration(int i, int n, int depth) {
+    if ((i % DEBUG_MOD) == 0) {
+        printf("\e[1;1m\e[38;5;087m");
+        for (int j = 0; j < depth; j++) {
+             printf("│");
+        }
+        printf("\e[0m %d/%d\n", i, n);
+    }
+}
 
 void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 {
@@ -212,7 +221,7 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 
 
 	 Ind=0;
-     printf("    First step\n");
+     printf("\e[1;1m\e[38;5;087m││┌\e[0m First step\n");
 	for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
 			pVertex	!= m_Poly->vertices_end();
 			pVertex++)
@@ -220,11 +229,11 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 		X[Ind]=0;
 		Y[Ind]=0;
 		Z[Ind]=0;
-		if ((Ind % DEBUG_MOD) == 0)
-            printf("      %d/%d\n", Ind + 1, MatSize);
+        debug_iteration(Ind + 1, MatSize, 3);
 		Taubin_smooth_multi_scale_per_vertex(m_Poly,(&(*pVertex)),X[Ind],Y[Ind],Z[Ind],radius,0.6307,XBUF[Ind],YBUF[Ind],ZBUF[Ind]);
 		Ind++;
 	}
+     printf("\e[1;1m\e[38;5;087m││└\e[0m\n");
 
 	Ind=0;
 	for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
@@ -242,16 +251,16 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 
 	Ind=0;
 
-    printf("    Second step\n");
+     printf("\e[1;1m\e[38;5;087m││┌\e[0m Second step\n");
 	for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
 			pVertex	!= m_Poly->vertices_end();
 			pVertex++)
 	{
-        if ((Ind % DEBUG_MOD) == 0)
-            printf("      %d/%d\n", Ind + 1, MatSize);
+        debug_iteration(Ind + 1, MatSize, 3);
 		Taubin_smooth_multi_scale_per_vertex(m_Poly,(&(*pVertex)),X[Ind],Y[Ind],Z[Ind],radius,-0.6732,XBUF[Ind],YBUF[Ind],ZBUF[Ind]);//-0.6352
 		Ind++;
 	}
+     printf("\e[1;1m\e[38;5;087m││└\e[0m\n");
 
 	Ind=0;
 	for(Vertex_iterator	pVertex	=	m_Poly->vertices_begin();
@@ -549,6 +558,7 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 				std::vector<Point> TabPoint;
 				double moyenne;
 
+                debug_iteration(NbVert + 1, PolyUsed->size_of_vertices(), 1);
 				Processroughness_per_vertex_curve(PolyUsed,(&(*pVertex)),radius,TabDistance,TabPoint,moyenne,true);
 				NbVert++;
 
@@ -566,12 +576,14 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
 
 
 
-    printf("Adaptive smoothing with 2-step Taubin filter\n");
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Adaptive smoothing with 2-step Taubin filter\n");
     int n = 5;
 	for(int i=0;i<n;i++) {
-        printf("  %d/%d\n", i + 1, n);
+        printf("\e[1;1m\e[38;5;087m│┌\e[0m %d/%d\n", i + 1, n);
 		Taubin_smooth_multi_scale(&SmoothPoly,SmoothRadius);
     }
+	SmoothPoly.write_off("smooth.off", false, false);
+    printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth.off\n");
 /*
     printf("Laplacian smoothing with 2-step Taubin filter\n");
 	for(int i=0;i<10;i++)
@@ -587,11 +599,10 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
 	}*/
 
 
-    printf("Compute normals of smooth mesh\n");
 	SmoothPoly.compute_normals();
 
 	Normal_cycle<Polyhedron> estimateur;
-    printf("Compute maximum curvature kmax of each vertex of the smooth mesh\n");
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute maximum curvature kmax of each vertex of the smooth mesh\n");
 	estimateur.principal_curvature(SmoothPoly,true,CurvatureRadius);
     FILE *smooth_kmax = fopen("smooth_kmax.txt", "w");
     for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
@@ -599,7 +610,9 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
         fprintf(smooth_kmax, "%lf\n", pVertex->Kmax());
     }
     fclose(smooth_kmax);
-    printf("Compute maximum curvature kmax of each vertex of the original mesh\n");
+    printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth_kmax.txt\n");
+
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute maximum curvature kmax of each vertex of the original mesh\n");
 	estimateur.principal_curvature(*m_Polyhedron,true,CurvatureRadius);
     FILE *original_kmax = fopen("original_kmax.txt", "w");
     for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
@@ -607,8 +620,9 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
         fprintf(original_kmax, "%lf\n", pVertex->Kmax());
     }
     fclose(original_kmax);
+    printf("\e[1;1m\e[38;5;087m└\e[0m written to original_kmax.txt\n");
 
-    printf("Compute average curvature kav of each vertex of the smooth mesh\n");
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute average curvature kav of each vertex of the smooth mesh\n");
 	Processroughness_curve(&SmoothPoly,radius);
     FILE *smooth_kav = fopen("smooth_kav.txt", "w");
     for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
@@ -616,7 +630,8 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
         fprintf(smooth_kav, "%lf\n", pVertex->CourbureMoyenne);
     }
     fclose(smooth_kav);
-    printf("Compute average curvature kav of each vertex of the original mesh\n");
+    printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth_kav.txt\n");
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute average curvature kav of each vertex of the original mesh\n");
 	Processroughness_curve(m_Polyhedron,radius);
     FILE *original_kav = fopen("original_kav.txt", "w");
     for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
@@ -625,32 +640,33 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
     }
     fclose(original_kav);
 
-    printf("Compute roughness for each vertex\n");
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute roughness for each vertex\n");
 	Vertex_iterator	pVertex2=SmoothPoly.vertices_begin();
-		for(Vertex_iterator	pVertex	=	m_Polyhedron->vertices_begin();
-					pVertex	!= m_Polyhedron->vertices_end();
-					pVertex++)
-		{
-			double offset=0;
-			if(pVertex->CourbureMoyenne>pVertex2->CourbureMoyenne)
-				offset=fabs(pVertex->CourbureMoyenne-pVertex2->CourbureMoyenne);
+	for(Vertex_iterator	pVertex	=	m_Polyhedron->vertices_begin();
+				pVertex	!= m_Polyhedron->vertices_end();
+				pVertex++)
+	{
+		double offset=0;
+		if(pVertex->CourbureMoyenne>pVertex2->CourbureMoyenne)
+			offset=fabs(pVertex->CourbureMoyenne-pVertex2->CourbureMoyenne);
 
-			pVertex->Roughness(offset);
-            if(offset<m_Polyhedron->MinNrmRoughCurvature())
-						m_Polyhedron->MinNrmRoughCurvature(offset);
+		pVertex->Roughness(offset);
+        if(offset<m_Polyhedron->MinNrmRoughCurvature())
+					m_Polyhedron->MinNrmRoughCurvature(offset);
 
-			if(offset>m_Polyhedron->MaxNrmRoughCurvature())
-				m_Polyhedron->MaxNrmRoughCurvature(offset);
+		if(offset>m_Polyhedron->MaxNrmRoughCurvature())
+			m_Polyhedron->MaxNrmRoughCurvature(offset);
 
-			pVertex2++;
-
-		}
-
-
-    printf("Save smooth mesh\n");
-		SmoothPoly.write_off("smooth.off", false, false);
-
+		pVertex2++;
 	}
+    FILE *roughness = fopen("roughness.txt", "w");
+    for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
+    {
+        fprintf(roughness, "%lf\n", pVertex->Roughness());
+    }
+    fclose(roughness);
+    printf("\e[1;1m\e[38;5;087m└\e[0m written to roughness.txt\n");
+}
 
 
 
