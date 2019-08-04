@@ -1,5 +1,5 @@
 if [ $# -ne 3 ]; then
-    echo "Need 3 arguments"
+    echo "bash process.sh purefe1_t7 RadiusSmooth CourbureSmooth"
     exit 1
 fi
 name=$1
