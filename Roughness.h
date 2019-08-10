@@ -269,8 +269,13 @@ void Taubin_smooth_multi_scale(Polyhedron * m_Poly, double radius)
 	{
 
 
-		Point p=Point(X[Ind],Y[Ind],Z[Ind]);
-		pVertex->point()=p;
+        if (isnan(X[Ind]) || isnan(Y[Ind]) || isnan(Z[Ind])) {
+            fprintf(stderr, "\e[38;5;226m┌\e[1;1m Warning:\e[0m Smoothing vertex %d gave the smoothed vertex::\n", Ind + 1);
+            fprintf(stderr, "\e[38;5;226m└\e[1;1m (%e, %e, %e) which contains NaNs, ignoring the smoothing of this vertex.\n", X[Ind], Y[Ind], Z[Ind]);
+        } else {
+            Point p=Point(X[Ind],Y[Ind],Z[Ind]);
+            pVertex->point()=p;
+        }
         Ind++;
 
 	}
