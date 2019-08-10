@@ -287,25 +287,27 @@ void geodes_principal_curvature_per_vert(Vertex *pVertex,
                     if(!h->is_border_edge()) 
 					{
 						double len_edge = std::sqrt(V*V);
-                         // compute (signed) angle between two incident faces, if exists
-						Facet_handle pFacet1 = h->facet();
-						Facet_handle pFacet2 = h->opposite()->facet();
-						CGAL_assertion(pFacet1 != pFacet2);
-						if(pFacet1 == NULL || pFacet2 == NULL)
-							continue; // border edge
-						Vector normal1 = pFacet1->normal();
-						Vector normal2 = pFacet2->normal();
-
-						double sine = (CGAL::cross_product(normal1,normal2)*V)/len_edge;
-						double beta = fix_sine(sine);
-
-                         // compute edge * edge^t * coeff, and add it to current matrix
-						
-
-						double pVector_edge[3] = {V.x(),V.y(),V.z()};
-						double ppMatrix[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
-						vector_times_transpose_mult(pVector_edge,ppMatrix,beta/len_edge);
-						add(ppMatrix,ppMatrix_sum);
+                        if (len_edge != 0.0) {
+                             // compute (signed) angle between two incident faces, if exists
+							Facet_handle pFacet1 = h->facet();
+							Facet_handle pFacet2 = h->opposite()->facet();
+							CGAL_assertion(pFacet1 != pFacet2);
+							if(pFacet1 == NULL || pFacet2 == NULL)
+								continue; // border edge
+							Vector normal1 = pFacet1->normal();
+							Vector normal2 = pFacet2->normal();
+                            
+							double sine = (CGAL::cross_product(normal1,normal2)*V)/len_edge;
+							double beta = fix_sine(sine);
+                            
+                             // compute edge * edge^t * coeff, and add it to current matrix
+							
+                            
+							double pVector_edge[3] = {V.x(),V.y(),V.z()};
+							double ppMatrix[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+							vector_times_transpose_mult(pVector_edge,ppMatrix,beta/len_edge);
+							add(ppMatrix,ppMatrix_sum);
+                        }
                     }
 
 
@@ -389,12 +391,22 @@ double fix_sine(double sine)
 
 	}
 
+/*
+    bool sphere_clip_vector(Point &O, double r,const Point &P, Vector &V)
 
+Given a sphere of radius `r` centered at `O`, returns whether the segment from
+`P` to `P + V` intersect the sphere. If it does, it also modifies `V` so that
+`P + V` is inside the boundary of the sphere.
+ */
 	bool sphere_clip_vector(Point &O, double r,const Point &P, Vector &V)
     {
 
         Vector W = P - O ;
         double a = (V*V);
+        if (a == 0.0) {
+            // Happens when the mesh contains two overlapping vertices.
+            return false; // As `P` is inside the sphere and `V` is zero, `P + V` is also inside it.
+        }
         double b = 2.0 * V * W ;
         double c = (W*W) - r*r ;
         double delta = b*b - 4*a*c ;
