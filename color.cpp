@@ -26,7 +26,7 @@ double colormap[9][3] = {
     {255.0/255, 255.0/255, 255.0/255}
 };
 
-void color_map (double *color, double x, double min, double max) {
+void color_map (double *color, double x, double min, double max, bool apply_sqrt) {
     //printf("%lf %lf %lf\n", min, x, max);
     if (x < min) {
         memcpy(color, colormap[0], 3);
@@ -34,12 +34,15 @@ void color_map (double *color, double x, double min, double max) {
         memcpy(color, colormap[NCOLORS-1], 3);
     } else {
         double scaling = (x - min) / (max - min);
-	//scaling = sqrt(scaling);
-	int i = 0;
-	for (i = 0; i < NCOLORS - 2 && scaling > (i + 1.0) / (NCOLORS - 1.0); i++);
-	//printf("%lf %lf %d\n", scaling, (i + 1.0) / (NCOLORS - 1.0), i);
-	scaling *= NCOLORS - 1;
-	scaling -= i;
+        if (apply_sqrt) {
+            //scaling = sqrt(scaling);
+            scaling = pow(scaling, 0.8);
+        }
+        int i = 0;
+        for (i = 0; i < NCOLORS - 2 && scaling > (i + 1.0) / (NCOLORS - 1.0); i++);
+        //printf("%lf %lf %d\n", scaling, (i + 1.0) / (NCOLORS - 1.0), i);
+        scaling *= NCOLORS - 1;
+        scaling -= i;
         for (int j = 0; j < 3; j++) {
             color[j] = colormap[i][j] + scaling * (colormap[i+1][j] - colormap[i][j]);
         }
@@ -99,21 +102,21 @@ int main(int argc, char *argv[])
     char *input_attr_filename = argv[2];
     char *output_mesh_filename = new char[16];
     strcpy(output_mesh_filename, "output.off");
-    bool log = false;
+    bool apply_sqrt = false;
     if (argc > 3) {
-        if (!strcmp(argv[3], "-l")) {
-            log = true;
+        if (!strcmp(argv[3], "-s")) {
+            apply_sqrt = true;
         } else if (endsWith(argv[3], ".off")) {
     	delete[] output_mesh_filename;
             output_mesh_filename = argv[3];
         } else {
-            printf("Invalid argument %s, should be -l or output.off\n", argv[3]);
+            printf("Invalid argument %s, should be -s or output.off\n", argv[3]);
             return EXIT_FAILURE;
         }
     }
     if (argc > 4) {
-        if (!strcmp(argv[4], "-l")) {
-            log = true;
+        if (!strcmp(argv[4], "-s")) {
+            apply_sqrt = true;
         }
     }
     // See https://people.sc.fsu.edu/~jburkardt/data/off/off.html
@@ -166,6 +169,11 @@ int main(int argc, char *argv[])
     }
     printf("min = %lf\n", min_attr);
     printf("max = %lf\n", max_attr);
+    if (apply_sqrt) {
+        printf("Applying sqrt\n");
+    } else {
+        printf("Not applying sqrt\n");
+    }
     rewind(input_attr);
     double color[3];
     for (int i = 1; i <= vertex_count; i++) {
@@ -177,7 +185,7 @@ int main(int argc, char *argv[])
 	    fprintf(stderr, "Invalid %s\n", input_attr_filename);
 	    return EXIT_FAILURE;
         }
-        color_map(color, attr, min_attr, max_attr);
+        color_map(color, attr, min_attr, max_attr, apply_sqrt);
         fprintf(output_mesh, " %lf %lf %lf 1.0\n",  color[0], color[1], color[2]);
     }
     for (int i = 1; i <= face_count; i++) {

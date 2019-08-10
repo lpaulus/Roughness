@@ -13,7 +13,7 @@ bool endsWith(const char *str1, const char *str2)
 int main(int argc, char *argv[])
 {
     if(argc <= 2 || (!endsWith(argv[1], ".off") && !endsWith(argv[1], ".obj")))
-        printf("Roughness model.[off|obj] epsilon [CurvatureRadius]\n");
+        printf("Roughness model.[off|obj] SmoothRadius [CurvatureRadius] [AverageRadius]\n");
     else
     {
         PolyhedronPtr poly = PolyhedronPtr(new Polyhedron());
@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
         poly->calc_nb_components();
         poly->calc_nb_boundaries();
 
-        double epsilon;
-        int err = sscanf(argv[2], "%lf", &epsilon);
+        double SmoothRadius;
+        int err = sscanf(argv[2], "%lf", &SmoothRadius);
         if (err != 1) {
-            fprintf(stderr, "[ Error: Invalid epsilon: %s\n", argv[2]);
+            fprintf(stderr, "[ Error: Invalid SmoothRadius: %s\n", argv[2]);
         }
 
         double CurvatureRadius = 0.005;
@@ -49,8 +49,16 @@ int main(int argc, char *argv[])
             }
         }
 
+        double AverageRadius = 2 * SmoothRadius;
+        if(argc > 4) {
+            err = sscanf(argv[4], "%lf", &AverageRadius);
+            if (err != 1) {
+                fprintf(stderr, "[ Error: Invalid AverageRadius: %s\n", argv[4]);
+            }
+        }
+
         CRoughness<Polyhedron> roughness(poly.get());
-        roughness.compute_Roughness(2*epsilon, epsilon, CurvatureRadius);
+        roughness.compute_Roughness(AverageRadius, SmoothRadius, CurvatureRadius);
     }
 
     return EXIT_SUCCESS;

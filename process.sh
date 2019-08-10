@@ -1,11 +1,12 @@
-if [ $# -ne 3 ]; then
-    echo "bash process.sh purefe1_t7 RadiusSmooth CourbureSmooth"
+if [ $# -ne 4 ]; then
+    echo "bash process.sh purefe1_t7 SmoothRadius CurvatureSmooth AverageRadius"
     exit 1
 fi
 name=$1
-eps=$2
-rad=$3
-dir="results/$name/${eps}_$rad"
+smooth=$2
+curvature=$3
+average=$4
+dir="results/$name/${smooth}_${curvature}_${average}"
 if [ ! -f data/$name.obj ]; then
     echo "No $name.obj in data directory"
     exit 1
@@ -16,7 +17,7 @@ if [ -d $dir ]; then
 fi
 mkdir -p $dir
 cd $dir
-../../../build/Roughness ../../../data/$name.obj $eps $rad
+../../../build/Roughness ../../../data/$name.obj $smooth $curvature $average
 if [ $? -ne 0 ]; then
     echo "Roughness failed"
     cd ../../../
