@@ -58,7 +58,7 @@ class Normal_cycle
 public:
 
 	
-void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
+void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius,double scaling)
 {
 	pMesh.MinNrmMinCurvature (100000);
 	pMesh.MaxNrmMinCurvature (-100000);
@@ -179,8 +179,12 @@ void principal_curvature(Polyhedron &pMesh,bool IsGeod,double radius)
 			pVertex->VKmax(VKmax);
 			pVertex->VKmin(VKmin);
 
-			pVertex->Kmax(Valpro[1][1]);
-			pVertex->Kmin(Valpro[2][2]);
+            // The curvature is the inverse of the radius of the osculating circle so
+            // the unit is [1/meter]. This means that if the mesh was scaled by dividing
+            // the vertices positions by `scaling`, the curvature was multiplied by `scaling`.
+            // By dividing by `scaling` here, the curvature is now the curvature of the original mesh.
+			pVertex->Kmax(Valpro[1][1] / scaling);
+			pVertex->Kmin(Valpro[2][2] / scaling);
 
 			
 			for(int i=0;i<(3);i++)

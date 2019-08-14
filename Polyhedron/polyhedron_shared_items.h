@@ -439,7 +439,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
 		Iso_cuboid& bbox() { return m_bbox; }
 		const Iso_cuboid bbox() const { return m_bbox; }
 
-        void Normalise()
+        double Normalise()
         {
 
             compute_bounding_box();
@@ -463,6 +463,7 @@ class MEPP_Common_Polyhedron : public CGAL::Polyhedron_3<kernel,items>
                 pVertex->point()=Point(pVertex->point().x()/max,pVertex->point().y()/max,pVertex->point().z()/max);
 
             }
+            return max;
 
         }
 

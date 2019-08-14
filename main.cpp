@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
         printf("\e[1;1m\e[38;5;087m└\e[0m\n");
 
         printf("\e[1;1m\e[38;5;087m┌ Normalise mesh to have unit bounding box\n");
-        poly->Normalise();
+        // The mesh is recentered and every vertices position are divided by `scaling`.
+        // We will need to adapt the roughness accordingly.
+        double scaling = poly->Normalise();
         poly->write_off("normalised.off", false, false);
         printf("\e[1;1m\e[38;5;087m└\e[0m written to normalised.off\n");
         poly->compute_bounding_box();
@@ -58,7 +60,7 @@ int main(int argc, char *argv[])
         }
 
         CRoughness<Polyhedron> roughness(poly.get());
-        roughness.compute_Roughness(AverageRadius, SmoothRadius, CurvatureRadius);
+        roughness.compute_Roughness(AverageRadius, SmoothRadius, CurvatureRadius, scaling);
     }
 
     return EXIT_SUCCESS;
