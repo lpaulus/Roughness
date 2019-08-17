@@ -581,14 +581,24 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
 
 
 
-    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Adaptive smoothing with 2-step Taubin filter\n");
-    int n = 5;
-	for(int i=0;i<n;i++) {
-        printf("\e[1;1m\e[38;5;087m│┌\e[0m %d/%d\n", i + 1, n);
-		Taubin_smooth_multi_scale(&SmoothPoly,SmoothRadius);
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Adaptive smoothing with 2-step Taubin filter with radius %lf\n", fabs(SmoothRadius));
+    if (SmoothRadius < 0) {
+    	bool ok = SmoothPoly.load_mesh("smooth.off");
+        if (!ok) {
+            fprintf(stderr, "Failed to read mesh from smooth.off");
+            exit(EXIT_FAILURE);
+        }
+        printf("\e[1;1m\e[38;5;087m└\e[0m read from smooth.off\n");
+    } else {
+        int n = 5;
+    	for(int i=0;i<n;i++) {
+            printf("\e[1;1m\e[38;5;087m│┌\e[0m %d/%d\n", i + 1, n);
+    		Taubin_smooth_multi_scale(&SmoothPoly,SmoothRadius);
+        }
+    	SmoothPoly.write_off("smooth.off", false, false);
+        printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth.off\n");
     }
-	SmoothPoly.write_off("smooth.off", false, false);
-    printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth.off\n");
+
 /*
     printf("Laplacian smoothing with 2-step Taubin filter\n");
 	for(int i=0;i<10;i++)
