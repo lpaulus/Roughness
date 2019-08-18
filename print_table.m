@@ -8,7 +8,7 @@ for row = 1:size(T, 1)
     end
     fprintf(file, '\\\\\n');
     if mod(row, 2) == 0
-        fprintf(file, '\\hline');
+        fprintf(file, '\\hline\n');
     end
 end
 fclose(file);
