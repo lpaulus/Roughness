@@ -1,0 +1,10 @@
+twip_times = {'', 't5'};
+twip_time_labels = {'0 h', '5 h'};
+twip_hours = [0, 5];
+twip_indices = {1:5, 1:5};
+roughness_table('twip', twip_times, twip_hours, twip_indices, {'5e-3'}, {'2.5e-3', '5e-3'}, {'2e-3', '5e-3', '1e-2'});
+purefe_times = {'', 't5', 't24', 't7'};
+purefe_time_labels = {'0 h', '5 h', '1 day', '7 days'};
+purefe_hours = [0, 5, 24, 168];
+purefe_indices = {1:15, 11:15, 6:10, 1:5};
+roughness_table('purefe', purefe_times, purefe_hours, purefe_indices, {'5e-3'}, {'2.5e-3', '5e-3'}, {'2e-3', '5e-3', '1e-2'});

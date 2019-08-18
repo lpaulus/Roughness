@@ -1,23 +1,35 @@
-function [] = roughness_stats(prefix, times, time_labels, ids, SmoothRadius, CurvatureRadius, AverageRadius)
+function [] = roughness_stats(prefix, times, time_labels, ids, SmoothRadius, CurvatureRadius, AverageRadius, log_scale)
 figure('Name', 'Ra');
 Ra_fig = axes();
 xlim(Ra_fig, [0, length(times) + 1]);
 set(Ra_fig,'xtick',1:length(time_labels),'xticklabel',time_labels);
+if log_scale
+    set(Ra_fig,'yscale','log')
+end
 
 figure('Name', 'Rq');
 Rq_fig = axes();
 xlim(Rq_fig, [0, length(times) + 1]);
 set(Rq_fig,'xtick',1:length(time_labels),'xticklabel',time_labels);
+if log_scale
+    set(Rq_fig,'yscale','log')
+end
 
 figure('Name', 'Rsk');
 Rsk_fig = axes();
 xlim(Rsk_fig, [0, length(times) + 1]);
 set(Rsk_fig,'xtick',1:length(time_labels),'xticklabel',time_labels);
+if log_scale
+    set(Rsk_fig,'yscale','log')
+end
 
 figure('Name', 'Rku');
 Rku_fig = axes();
 xlim(Rku_fig, [0, length(times) + 1]);
 set(Rku_fig,'xtick',1:length(time_labels),'xticklabel',time_labels);
+if log_scale
+    set(Rku_fig,'yscale','log')
+end
 
 for time_idx = 1:length(times)
     n = length(ids{time_idx});
@@ -41,6 +53,9 @@ for time_idx = 1:length(times)
 end
 
 suffix = sprintf('%s_%s_%s_%s', prefix, SmoothRadius, CurvatureRadius, AverageRadius);
+if log_scale
+    suffix = sprintf('log_%s', suffix);
+end
 saveas(Ra_fig, sprintf('results/Ra_%s.eps', suffix), 'epsc');
 saveas(Rq_fig, sprintf('results/Rq_%s.eps', suffix), 'epsc');
 saveas(Rsk_fig, sprintf('results/Rsk_%s.eps', suffix), 'epsc');

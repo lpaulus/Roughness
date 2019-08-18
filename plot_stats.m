@@ -11,7 +11,7 @@ n = length(x);
 t = tinv(0.975, n - 1);
 err = t * sqrt(s2 / n);
 hold(fig, 'on');
-errorbar(fig, time_idx, m, err);
-scatter(fig, time_idx * ones(n, 1), x);
+bar = errorbar(fig, time_idx, m, err, 'LineWidth', 2, 'CapSize', 30, 'Marker', '+', 'MarkerSize', 15);
+%bar.XNegativeDelta = min(m - 1e-6, bar.XNegativeDelta);
+scatter(fig, time_idx * ones(n, 1), x, 64, 'Marker', 'x', 'LineWidth', 2);
 end
-
