@@ -8,8 +8,8 @@ input_sync () {
 output_sync () {
     if [ ! -f "$1/$2" ]; then
         mv "$2" "$1/$2"
+        input_sync "$1/$2"
     fi
-    input_sync "$1/$2"
 }
 
 if [ $# -ne 4 ]; then
@@ -32,27 +32,30 @@ if [ -d $dir ]; then
 fi
 mkdir -p $dir
 cd $dir
+smooth_radius=$smooth
 if [ -f "../../smooth.off" ]; then
-    smooth="-$smooth"
+    smooth_radius="-$smooth"
 fi
 input_sync "../../smooth.off"
-$root/build/Roughness $root/data/$name.obj $smooth $curvature $average
-output_sync "../.." "smooth.off"
-output_sync ".." "original_kmax.txt"
-output_sync ".." "smooth_kmax.txt"
+$root/build/Roughness $root/data/$name.obj $smooth_radius $curvature $average
 if [ $? -ne 0 ]; then
     echo "Roughness failed"
     cd $root
     rm -r $dir
     exit $?
 fi
+output_sync "../.." "smooth.off"
+output_sync ".." "original_kmax.txt"
+output_sync ".." "smooth_kmax.txt"
 cd $root
 input_sync "../original_kmax.off"
 input_sync "../smooth_kmax.off"
 input_sync "../original_kmax_sqrt.off"
 input_sync "../smooth_kmax_sqrt.off"
 bash color.sh $name $smooth $curvature $average
+cd $dir
 output_sync ".." "original_kmax.off"
 output_sync ".." "smooth_kmax.off"
 output_sync ".." "original_kmax_sqrt.off"
 output_sync ".." "smooth_kmax_sqrt.off"
+cd $root
