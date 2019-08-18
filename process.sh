@@ -32,12 +32,20 @@ if [ -d $dir ]; then
 fi
 mkdir -p $dir
 cd $dir
-smooth_radius=$smooth
-if [ -f "../../smooth.off" ]; then
-    smooth_radius="-$smooth"
-fi
 input_sync "../../smooth.off"
-$root/build/Roughness $root/data/$name.obj $smooth_radius $curvature $average
+if [ -f "smooth.off" ]; then
+    smooth_radius="-$smooth"
+else
+    smooth_radius=$smooth
+fi
+input_sync "../original_kmax.txt"
+input_sync "../smooth_kmax.txt"
+if [ -f "original_kmax.txt" ] && [ -f "smooth_kmax.txt" ]; then
+    curvature_radius="-$curvature"
+else
+    curvature_radius="$curvature"
+fi
+$root/build/Roughness $root/data/$name.obj $smooth_radius $curvature_radius $average
 if [ $? -ne 0 ]; then
     echo "Roughness failed"
     cd $root

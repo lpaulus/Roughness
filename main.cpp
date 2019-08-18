@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
         double SmoothRadius;
         int err = sscanf(argv[2], "%lf", &SmoothRadius);
         if (err != 1) {
-            fprintf(stderr, "[ Error: Invalid SmoothRadius: %s\n", argv[2]);
+            fprintf(stderr, "\e[1;1m\e[38;5;196m[ Error:\e[0m Invalid SmoothRadius: %s\n", argv[2]);
         }
 
         double CurvatureRadius = 0.005;
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
         }
 
         CRoughness<Polyhedron> roughness(poly.get());
-        roughness.compute_Roughness(AverageRadius, SmoothRadius, CurvatureRadius, scaling);
+        roughness.compute_Roughness(SmoothRadius, CurvatureRadius, AverageRadius, scaling);
     }
 
     return EXIT_SUCCESS;

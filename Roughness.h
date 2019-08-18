@@ -571,7 +571,41 @@ void Processroughness_per_vertex_curve(Polyhedron * PolyUsed,Vertex* pVertex,dou
 
 	}
 
-void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadius, double scaling)
+bool load_Kmax(Polyhedron &pMesh, string filename)
+{
+    FILE *pFile = fopen(filename.c_str(), "r");
+    if (pFile == NULL) {
+        fprintf(stderr, "No file %s\n", filename.c_str());
+        return false;
+    }
+    char line[128];
+    double Kmax = 0.0;
+    Vertex_iterator pVertex = NULL;
+    int i = 0;
+    for(pVertex = pMesh.vertices_begin();
+        pVertex != pMesh.vertices_end();
+        pVertex++)
+    {
+        i += 1;
+        char *cerr = fgets(line, 128, pFile);
+        if (cerr == NULL) {
+            fprintf(stderr, "Cannot read Kmax for  %d'th vertex\n", i);
+            return false;
+        }
+        int err = sscanf(line, "%lf", &Kmax);
+        if (err != 1) {
+            fprintf(stderr, "Cannot parse %s into a number\n", line);
+            return false;
+        }
+        pVertex->Kmax(Kmax);
+    }
+
+    fclose(pFile);
+    return true;
+}
+
+
+void compute_Roughness(double SmoothRadius, double CurvatureRadius, double AverageRadius, double scaling)
 {
 
 	Polyhedron SmoothPoly=*m_Polyhedron;
@@ -619,28 +653,47 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
 	SmoothPoly.compute_normals();
 
 	Normal_cycle<Polyhedron> estimateur;
-    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute maximum curvature kmax of each vertex of the smooth mesh\n");
-	estimateur.principal_curvature(SmoothPoly,true,CurvatureRadius,scaling);
-    FILE *smooth_kmax = fopen("smooth_kmax.txt", "w");
-    for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
-    {
-        fprintf(smooth_kmax, "%lf\n", pVertex->Kmax());
-    }
-    fclose(smooth_kmax);
-    printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth_kmax.txt\n");
 
-    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute maximum curvature kmax of each vertex of the original mesh\n");
-	estimateur.principal_curvature(*m_Polyhedron,true,CurvatureRadius,scaling);
-    FILE *original_kmax = fopen("original_kmax.txt", "w");
-    for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
-    {
-        fprintf(original_kmax, "%lf\n", pVertex->Kmax());
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute maximum curvature kmax of each vertex of the smooth mesh with radius %e\n", fabs(CurvatureRadius));
+    if (CurvatureRadius < 0) {
+        bool ok = load_Kmax(SmoothPoly, "smooth_kmax.txt");
+        if (!ok) {
+            fprintf(stderr, "\e[1;1m\e[38;5;196m[ Error:\e[0m Failed to read Kmax from smooth_kmax.txt\n");
+            exit(EXIT_FAILURE);
+        }
+        printf("\e[1;1m\e[38;5;087m└\e[0m read from smooth_kmax.txt\n");
+    } else {
+        estimateur.principal_curvature(SmoothPoly,true,CurvatureRadius,scaling);
+        FILE *smooth_kmax = fopen("smooth_kmax.txt", "w");
+        for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
+        {
+            fprintf(smooth_kmax, "%lf\n", pVertex->Kmax());
+        }
+        fclose(smooth_kmax);
+        printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth_kmax.txt\n");
     }
-    fclose(original_kmax);
-    printf("\e[1;1m\e[38;5;087m└\e[0m written to original_kmax.txt\n");
 
-    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute average curvature kav of each vertex of the smooth mesh\n");
-	Processroughness_curve(&SmoothPoly,radius);
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute maximum curvature kmax of each vertex of the original mesh with radius %e\n", fabs(CurvatureRadius));
+    if (CurvatureRadius < 0) {
+        bool ok = load_Kmax(*m_Polyhedron, "original_kmax.txt");
+        if (!ok) {
+            fprintf(stderr, "\e[1;1m\e[38;5;196m[ Error:\e[0m Failed to read Kmax from original_kmax.txt\n");
+            exit(EXIT_FAILURE);
+        }
+        printf("\e[1;1m\e[38;5;087m└\e[0m read from smooth_kmax.txt\n");
+    } else {
+        estimateur.principal_curvature(*m_Polyhedron,true,CurvatureRadius,scaling);
+        FILE *original_kmax = fopen("original_kmax.txt", "w");
+        for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
+        {
+            fprintf(original_kmax, "%lf\n", pVertex->Kmax());
+        }
+        fclose(original_kmax);
+        printf("\e[1;1m\e[38;5;087m└\e[0m written to original_kmax.txt\n");
+    }
+
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute average curvature kav of each vertex of the smooth mesh with radius %e\n", fabs(AverageRadius));
+	Processroughness_curve(&SmoothPoly, AverageRadius);
     FILE *smooth_kav = fopen("smooth_kav.txt", "w");
     for (Vertex_iterator pVertex = SmoothPoly.vertices_begin(); pVertex != SmoothPoly.vertices_end(); pVertex++)
     {
@@ -648,8 +701,8 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
     }
     fclose(smooth_kav);
     printf("\e[1;1m\e[38;5;087m└\e[0m written to smooth_kav.txt\n");
-    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute average curvature kav of each vertex of the original mesh\n");
-	Processroughness_curve(m_Polyhedron,radius);
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Compute average curvature kav of each vertex of the original mesh with radius %e\n", fabs(AverageRadius));
+	Processroughness_curve(m_Polyhedron, AverageRadius);
     FILE *original_kav = fopen("original_kav.txt", "w");
     for (Vertex_iterator pVertex = m_Polyhedron->vertices_begin(); pVertex != m_Polyhedron->vertices_end(); pVertex++)
     {
