@@ -581,11 +581,13 @@ void compute_Roughness(double radius, double SmoothRadius, double CurvatureRadiu
 
 
 
-    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Adaptive smoothing with 2-step Taubin filter with radius %lf\n", fabs(SmoothRadius));
+    printf("\e[1;1m\e[38;5;087m┌ Info:\e[0m Adaptive smoothing with 2-step Taubin filter with radius %e\n", fabs(SmoothRadius));
     if (SmoothRadius < 0) {
+        // Erase the copy of `m_Polyhedron`.
+        SmoothPoly = *PolyhedronPtr(new Polyhedron());
     	bool ok = SmoothPoly.load_mesh("smooth.off");
         if (!ok) {
-            fprintf(stderr, "Failed to read mesh from smooth.off");
+            fprintf(stderr, "\e[1;1m\e[38;5;196m[ Error:\e[0m Failed to read mesh from smooth.off\n");
             exit(EXIT_FAILURE);
         }
         printf("\e[1;1m\e[38;5;087m└\e[0m read from smooth.off\n");
