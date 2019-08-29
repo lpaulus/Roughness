@@ -1,7 +1,7 @@
 # Roughness analysis of 3D meshes
 
 This tool was written by Léa Paulus as part of her master thesis supervised by [Prof. Greet Kerckhofs](https://uclouvain.be/fr/repertoires/greet.kerckhofs).
-This started as a fork of [the code provided by Guillaume Lavoué](https://perso.liris.cnrs.fr/guillaume.lavoue/rech/soft.html) but I fixed several bugs and added new features as highlighted in my thesis report.
+This started as a fork of [the code provided by Guillaume Lavoué](https://perso.liris.cnrs.fr/guillaume.lavoue/rech/soft.html) but I fixed several bugs and added new features as highlighted in my [thesis report](https://dial.uclouvain.be/downloader/downloader_thesis.php?pid=thesis:22284&datastream=PDF_01&key=2eeb063b64f1a3defa14fd0b7d6151aa).
 
 To use the tool, first install it as follows:
 ```
